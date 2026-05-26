@@ -1,24 +1,28 @@
-import { useEffect } from "react";
-import "./App.css";
-import { supabase } from "./lib/supabase";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/authContext";
+import Login from "./pages/auth/auth-login";
+import Signup from "./pages/auth/auth.signup";
+import ProtectedRoute from "./components/auth/protected-route";
+import Dashboard from "./pages/dashboard";
 
 function App() {
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (error) {
-        console.error("Error conectando a supabase:", error);
-      } else {
-        console.log("Supabase conectado ✓", data);
-      }
-    });
-  }, []);
-
   return (
-    <>
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <h1 className="text-3xl font-bold text-gray-800">ObraAdmin</h1>
-      </div>
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
